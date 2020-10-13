@@ -4,32 +4,23 @@ const morgan = require('morgan');
 const app = express();
 require('dotenv').config();
 
-const logger = require('./middlewares/logger');
+// const logger = require('./middlewares/logger');
+// app.use(express.static(path.join(__dirname, 'public')));
+// app.use(logger)
+const userRoutes = require('./routes/usersRoutes')
 
 const port = process.env.PORT || 3000;
 
-// app.use(express.static(path.join(__dirname, 'public')));
+
+// general middelware:
 app.use(morgan('dev'));
-// app.use(logger);
 
-let users = [
-  { id: '1', name: 'jd', email: 'jd@me.com', password: '123' },
-  { id: '2', name: 'paul', email: 'paul@me.com', password: '123' },
-  { id: '3', name: 'lois', email: 'lois@me.com', password: '123' },
-  { id: '4', name: 'sidney', email: 'sidney@me.com', password: '123' },
-  { id: '5', name: 'canton', email: 'canton@me.com', password: '123' }
-];
+// middleware for post request
+app.use(express.json());
+app.use(express.urlencoded({extended: false}));
 
-app.get('/', (req, res) => {
-  return res.status(200).json({ confirmation: 'success', users });
-});
-
-app.get('/user/:id', (req, res) => {
-  users.filter((user) => {
-    if (user.id === req.params.id)
-      return res.json({ confirmation: 'success', user });
-  });
-});
+// userRoutes middleware:
+app.use('/api/v1/users', userRoutes);
 
 app.listen(port, () => {
   console.log(`Listening on port: ${port}`);
